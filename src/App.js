@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import "./App.css";
-import { Header } from './components/Header/Header';
-
-const tg = window.Telegram.WebApp;
+import { Header } from "./components/Header/Header";
+import { useTelegram } from "./hooks/useTelegram";
 
 function App() {
+  const { tg } = useTelegram();
   useEffect(() => {
     tg.ready(); // Сообщение телеграму, что приложение готово к отображению
   }, []);
