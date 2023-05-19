@@ -7,7 +7,7 @@ function App() {
   const { tg } = useTelegram();
   useEffect(() => {
     tg.ready(); // Сообщение телеграму, что приложение готово к отображению
-  }, []);
+  }, [tg]);
 
   return (
     <div className="App">
