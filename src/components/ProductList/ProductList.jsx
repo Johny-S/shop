@@ -1,7 +1,6 @@
 import "./ProductList.css";
 
-export const ProductList = (props) => {
-  const {  } = props;
+export const ProductList = () => {
 
   return (
     <div className="">
