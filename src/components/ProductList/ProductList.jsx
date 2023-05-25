@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTelegram } from "../../hooks/useTelegram";
 import { ProductItem } from "../ProductItem/ProductItem";
 import "./ProductList.css";
@@ -17,10 +17,10 @@ const products = [
 ];
 
 export const ProductList = () => {
-  const { tg } = useTelegram();
+  const { tg, queryId } = useTelegram();
   const [basket, setBasket] = useState([]);
 
-  const amount = useMemo(() => basket.reduce((acc, { price }) => acc + price, 0), [basket]);
+  const totalPrice = useMemo(() => basket.reduce((acc, { price }) => acc + price, 0), [basket]);
 
   const onAdd = (product) => {
     const inBasket = basket.find(({ id }) => product.id === id);
@@ -37,10 +37,32 @@ export const ProductList = () => {
     } else {
       tg.MainButton.show();
       tg.MainButton.setParams({
-        text: `Купить: ${amount} руб.`,
+        text: `Купить: ${totalPrice} руб.`,
       });
     }
-  }, [amount, basket, tg.MainButton]);
+  }, [totalPrice, basket, tg.MainButton]);
+
+  const onSendData = useCallback(() => {
+    const data = {
+      products: basket,
+      totalPrice,
+      queryId,
+    };
+    fetch("http://localhost:8000", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  }, [basket, queryId, totalPrice]);
+
+  useEffect(() => {
+    tg.MainButton.onClick(onSendData);
+    return () => {
+      tg.MainButton.offClick(onSendData);
+    };
+  }, [onSendData, tg.MainButton]);
 
   return (
     <div className="list">
