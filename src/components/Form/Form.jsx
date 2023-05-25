@@ -10,11 +10,13 @@ export const Form = () => {
   const { tg } = useTelegram();
 
   const onSendData = useCallback(() => {
-    tg.sendData({
-      country,
-      city,
-      subject,
-    });
+    tg.sendData(
+      JSON.stringify({
+        country,
+        city,
+        subject,
+      }),
+    );
   }, [city, country, subject, tg]);
 
   useEffect(() => {
@@ -23,9 +25,8 @@ export const Form = () => {
     });
     tg.MainButton.onClick(onSendData);
     return () => {
-      
       tg.MainButton.offClick(onSendData);
-    }
+    };
   }, [onSendData, tg.MainButton]);
 
   useEffect(() => {
