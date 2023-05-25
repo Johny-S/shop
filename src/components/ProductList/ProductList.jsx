@@ -37,15 +37,15 @@ export const ProductList = () => {
     } else {
       tg.MainButton.show();
       tg.MainButton.setParams({
-        title: `Купить: ${amount} руб.`,
+        text: `Купить: ${amount} руб.`,
       });
     }
   }, [amount, basket, tg.MainButton]);
 
   return (
     <div className="list">
-      {products.map((product) => (
-        <ProductItem product={product} className="item" key={Date.now()} onAdd={onAdd} />
+      {products.map((product, idx) => (
+        <ProductItem product={product} className="item" key={Date.now() + idx} onAdd={onAdd} />
       ))}
     </div>
   );
