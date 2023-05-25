@@ -48,7 +48,7 @@ export const ProductList = () => {
       totalPrice,
       queryId,
     };
-    fetch("http://localhost:8000", {
+    fetch("http://45.145.65.185:8000", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
