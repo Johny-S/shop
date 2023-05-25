@@ -17,58 +17,123 @@ const products = [
 ];
 
 export const ProductList = () => {
-  const { tg, queryId } = useTelegram();
-  const [basket, setBasket] = useState([]);
+  // const { tg, queryId } = useTelegram();
+  // const [basket, setBasket] = useState([]);
 
-  const totalPrice = useMemo(() => basket.reduce((acc, { price }) => acc + price, 0), [basket]);
+  // const totalPrice = useMemo(() => basket.reduce((acc, { price }) => acc + price, 0), [basket]);
 
-  const onAdd = (product) => {
-    const inBasket = basket.find(({ id }) => product.id === id);
-    if (inBasket) {
-      setBasket((prev) => prev.filter(({ id }) => id !== product.id));
-    } else {
-      setBasket((prev) => [...prev, product]);
+  // const onAdd = (product) => {
+  //   const inBasket = basket.find(({ id }) => product.id === id);
+  //   if (inBasket) {
+  //     setBasket((prev) => prev.filter(({ id }) => id !== product.id));
+  //   } else {
+  //     setBasket((prev) => [...prev, product]);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (basket.length === 0) {
+  //     tg.MainButton.hide();
+  //   } else {
+  //     tg.MainButton.show();
+  //     tg.MainButton.setParams({
+  //       text: `Купить: ${totalPrice} руб.`,
+  //     });
+  //   }
+  // }, [totalPrice, basket, tg.MainButton]);
+
+  // const onSendData = useCallback(() => {
+  //   const data = {
+  //     products: basket,
+  //     totalPrice,
+  //     queryId,
+  //   };
+  //   fetch("http://45.145.65.185:8000/web-data", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(data),
+  //   });
+  // }, [basket, queryId, totalPrice]);
+
+  // useEffect(() => {
+  //   tg.MainButton.onClick(onSendData);
+  //   return () => {
+  //     tg.MainButton.offClick(onSendData);
+  //   };
+  // }, [onSendData, tg.MainButton]);
+
+  // return (
+  //   <div className="list">
+  //     {products.map((product, idx) => (
+  //       <ProductItem product={product} className="item" key={Date.now() + idx} onAdd={onAdd} />
+  //     ))}
+  //   </div>
+  // );
+
+  const getTotalPrice = (items = []) => {
+    return items.reduce((acc, item) => {
+        return acc += item.price
+    }, 0)
+}
+
+  const [addedItems, setAddedItems] = useState([]);
+    const {tg, queryId} = useTelegram();
+
+    const onSendData = useCallback(() => {
+        const data = {
+            products: addedItems,
+            totalPrice: getTotalPrice(addedItems),
+            queryId,
+        }
+        fetch('http://45.145.65.185:8000/web-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+    }, [addedItems, queryId])
+
+    useEffect(() => {
+        tg.onEvent('mainButtonClicked', onSendData)
+        return () => {
+            tg.offEvent('mainButtonClicked', onSendData)
+        }
+    }, [onSendData, tg])
+
+    const onAdd = (product) => {
+        const alreadyAdded = addedItems.find(item => item.id === product.id);
+        let newItems = [];
+
+        if(alreadyAdded) {
+            newItems = addedItems.filter(item => item.id !== product.id);
+        } else {
+            newItems = [...addedItems, product];
+        }
+
+        setAddedItems(newItems)
+
+        if(newItems.length === 0) {
+            tg.MainButton.hide();
+        } else {
+            tg.MainButton.show();
+            tg.MainButton.setParams({
+                text: `Купить ${getTotalPrice(newItems)}`
+            })
+        }
     }
-  };
 
-  useEffect(() => {
-    if (basket.length === 0) {
-      tg.MainButton.hide();
-    } else {
-      tg.MainButton.show();
-      tg.MainButton.setParams({
-        text: `Купить: ${totalPrice} руб.`,
-      });
-    }
-  }, [totalPrice, basket, tg.MainButton]);
-
-  const onSendData = useCallback(() => {
-    const data = {
-      products: basket,
-      totalPrice,
-      queryId,
-    };
-    fetch("http://45.145.65.185:8000/web-data", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-  }, [basket, queryId, totalPrice]);
-
-  useEffect(() => {
-    tg.MainButton.onClick(onSendData);
-    return () => {
-      tg.MainButton.offClick(onSendData);
-    };
-  }, [onSendData, tg.MainButton]);
-
-  return (
-    <div className="list">
-      {products.map((product, idx) => (
-        <ProductItem product={product} className="item" key={Date.now() + idx} onAdd={onAdd} />
-      ))}
-    </div>
-  );
+    return (
+        <div className={'list'}>
+            {products.map(item => (
+                <ProductItem
+                    product={item}
+                    onAdd={onAdd}
+                    className={'item'}
+                />
+            ))}
+        </div>
+    );
 };
