@@ -17,7 +17,7 @@ export const ProductItem = ({ product, className, onAdd, isSent }) => {
       <Button className="add-btn" onClick={onAddHandler}>
         Добавить в корзину
       </Button>
-      {isSent && "Отправлено"}
+      {isSent}
     </div>
   );
 };
