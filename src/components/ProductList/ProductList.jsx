@@ -87,7 +87,7 @@ export const ProductList = () => {
             totalPrice: getTotalPrice(addedItems),
             queryId,
         }
-        fetch('http://45.145.65.185:8000/web-data', {
+        fetch('http://localhost:8000/web-data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,9 +97,9 @@ export const ProductList = () => {
     }, [addedItems, queryId])
 
     useEffect(() => {
-        tg.onEvent('mainButtonClicked', onSendData)
+        tg.onClick(onSendData)
         return () => {
-            tg.offEvent('mainButtonClicked', onSendData)
+            tg.offClick(onSendData)
         }
     }, [onSendData, tg])
 
