@@ -72,6 +72,8 @@ export const ProductList = () => {
   //   </div>
   // );
 
+  const [isSent, setIsSent] = useState(false);
+
   const getTotalPrice = (items = []) => {
     return items.reduce((acc, item) => {
         return acc += item.price
@@ -82,17 +84,20 @@ export const ProductList = () => {
     const {tg, queryId} = useTelegram();
 
     const onSendData = useCallback(() => {
+      setIsSent(true);
         const data = {
             products: addedItems,
             totalPrice: getTotalPrice(addedItems),
             queryId,
         }
-        fetch('http://45.145.65.185/web-data', {
+        return fetch('http://45.145.65.185/web-data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
+        }).then((data) => {
+          console.log(data);
         })
     }, [addedItems, queryId])
 
@@ -133,6 +138,7 @@ export const ProductList = () => {
                     product={item}
                     onAdd={onAdd}
                     className={'item'}
+                    isSent={isSent}
                 />
             ))}
         </div>

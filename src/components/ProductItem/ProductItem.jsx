@@ -1,7 +1,7 @@
 import { Button } from "../Button/Button";
 import "./ProductItem.css";
 
-export const ProductItem = ({ product, className, onAdd }) => {
+export const ProductItem = ({ product, className, onAdd, isSent }) => {
   const onAddHandler = () => {
     onAdd(product);
   };
@@ -17,6 +17,7 @@ export const ProductItem = ({ product, className, onAdd }) => {
       <Button className="add-btn" onClick={onAddHandler}>
         Добавить в корзину
       </Button>
+      {isSent && "Отправлено"}
     </div>
   );
 };
