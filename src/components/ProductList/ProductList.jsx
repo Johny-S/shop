@@ -84,20 +84,19 @@ export const ProductList = () => {
     const {tg, queryId} = useTelegram();
 
     const onSendData = useCallback(() => {
-      setIsSent(true);
-        const data = {
-            products: addedItems,
-            totalPrice: getTotalPrice(addedItems),
-            queryId,
-        }
-        return fetch('http://45.145.65.185/web-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        }).then((data) => {
-          console.log(data);
+      const data = {
+        products: addedItems,
+        totalPrice: getTotalPrice(addedItems),
+        queryId,
+      }
+      return fetch('http://45.145.65.185/web-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      }).then((data) => {
+          setIsSent(JSON.stringify(data));
         })
     }, [addedItems, queryId])
 
