@@ -97,9 +97,9 @@ export const ProductList = () => {
     }, [addedItems, queryId])
 
     useEffect(() => {
-        tg.onClick(onSendData)
+        tg.onEvent('mainButtonClicked', onSendData)
         return () => {
-            tg.offClick(onSendData)
+            tg.offEvent('mainButtonClicked', onSendData)
         }
     }, [onSendData, tg])
 
@@ -127,8 +127,9 @@ export const ProductList = () => {
 
     return (
         <div className={'list'}>
-            {products.map(item => (
+            {products.map((item, idx) => (
                 <ProductItem
+                key={Date.now() + idx}
                     product={item}
                     onAdd={onAdd}
                     className={'item'}
